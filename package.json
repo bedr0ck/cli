@@ -1,0 +1,70 @@
+{
+  "name": "@bedr0ck/cli",
+  "version": "0.1.0",
+  "description": "CLI tool for creating bedrock addons",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "bin": {
+    "bedr0ck": "./bin/cli.js",
+    "bedrock": "./bin/cli.js"
+  },
+  "files": [
+    "/bin",
+    "/lib",
+    "/resources"
+  ],
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "scripts": {
+    "build": "npm run clean && tsc -b",
+    "lint": "tslint -t stylish --project tsconfig.json",
+    "lint:fix": "npm run lint -- --fix",
+    "precommit": "npm run lint",
+    "release": "npm run precommit && standard-version && git push --follow-tags origin master && npm run publish",
+    "clean": "rimraf lib bin"
+  },
+  "license": "MIT",
+  "author": "Nurdism <https://github.com/nurdism>",
+  "homepage": "https://github.com/bedr0ck/cli#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bedr0ck/cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bedr0ck/cli/issues"
+  },
+  "keywords": [
+    "minecraft",
+    "bedrock",
+    "typescript"
+  ],
+  "dependencies": {
+    "ajv": "^6.10.2",
+    "archiver": "^3.1.1",
+    "bluebird": "^3.5.5",
+    "cac": "^6.5.2",
+    "chalk": "^2.4.2",
+    "chokidar": "^3.0.2",
+    "copy-webpack-plugin": "^5.0.4",
+    "friendly-errors-webpack-plugin": "^1.7.0",
+    "fs-extra": "^8.1.0",
+    "globby": "^10.0.1",
+    "inquirer": "^7.0.0",
+    "uuid": "^3.3.3",
+    "webpack": "^4.39.3"
+  },
+  "devDependencies": {
+    "@types/archiver": "^3.0.0",
+    "@types/bluebird": "^3.5.27",
+    "@types/fs-extra": "^8.0.0",
+    "@types/inquirer": "^6.5.0",
+    "@types/node": "^12.7.4",
+    "@types/uuid": "^3.4.5",
+    "@types/webpack": "^4.39.1",
+    "rimraf": "^3.0.0",
+    "standard-version": "^7.0.0",
+    "tslint": "^5.19.0",
+    "typescript": "^3.6.2"
+  }
+}

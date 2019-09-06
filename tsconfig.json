@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "target": "es2017",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": false,
+    "strict": true,
+    "outDir": "."
+  },
+  "exclude": [
+    "node_modules",
+    "bin",
+    "lib",
+  ],
+}
