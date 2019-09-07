@@ -48,7 +48,7 @@ export default function(opts: IBedrockOptions, mod: IModuleData, conf: IBedrockC
     // module type.
     output: {
       // Hacky way to force webpack to have multiple output folders vs multiple files per one path
-      filename: 'scripts/[name]/[name].js',
+      filename: '[name].js',
       libraryTarget: 'commonjs',
       path: path.join(conf.rootDir, conf.distDir, mod.folder),
     },
@@ -71,11 +71,8 @@ export default function(opts: IBedrockOptions, mod: IModuleData, conf: IBedrockC
     ],
   }
 
-  addEntry(base, path.join(conf.rootDir, conf.srcDir, mod.folder, 'scripts/client/index.js'), 'client')
-  addEntry(base, path.join(conf.rootDir, conf.srcDir, mod.folder, 'scripts/client/client.js'), 'client')
-
-  addEntry(base, path.join(conf.rootDir, conf.srcDir, mod.folder, 'scripts/server/index.js'), 'server')
-  addEntry(base, path.join(conf.rootDir, conf.srcDir, mod.folder, 'scripts/server/server.js'), 'server')
+  addEntry(base, path.join(conf.rootDir, conf.srcDir, mod.folder, 'scripts/client/index.js'), 'scripts/client/index')
+  addEntry(base, path.join(conf.rootDir, conf.srcDir, mod.folder, 'scripts/server/index.js'), 'scripts/server/index')
 
   return base
 }
