@@ -10,17 +10,33 @@ import { time } from '../lib/utils'
 // @ts-ignore
 import { version } from '../package.json'
 
-const bedrock = new Bedr0ck()
 const cli = cac('bedr0ck')
 
-cli
-  .option('--verboose, --debug', '')
+const init = () => {
+  const bedrock = new Bedr0ck()
+
+  if (cli.options.debug) {
+    bedrock.on('debug', (m) => console.log(m))
+  }
+
+  bedrock.on('error', (m) => console.log(m))
+  bedrock.on('warn', (m) => console.log(m))
+  bedrock.on('info', (m) => console.log(m))
+  bedrock.on('message', (m) => console.log(m))
+
+  return bedrock
+}
 
 cli
-  .command('build [module]', 'Builds addon scripts into one file')
+  .option('--verboose, --debug', 'Verboose output')
+
+cli
+  .command('build [module/s?]', 'Builds addon scripts into one file')
   .option('-w, --watch', 'Watch for changes, build and install modules')
   .option('-i, --install', 'Install module after build')
   .action((mod: string, opts) => {
+    const bedrock = init()
+
     const modules = bedrock.filter(mod)
     const start: Date = new Date()
 
@@ -35,9 +51,10 @@ cli
   })
 
 cli
-  .command('pack [module]', 'Packs addons into one .mcaddon package')
-  .option('-b, --build', 'build before packing')
+  .command('pack [module/s?]', 'Packs addons into one .mcaddon package')
+  .option('-b, --build', 'Build before packing')
   .action((mod, opts) => {
+    const bedrock = init()
     const modules = bedrock.filter(mod)
     const start: Date = new Date()
 
@@ -51,9 +68,10 @@ cli
   })
 
 cli
-  .command('install [module]', 'Installs module from your local micraft client')
-  .option('-b, --build', 'build before installing')
+  .command('install [module/s?]', 'Installs module from your local micraft client')
+  .option('-b, --build', 'Build before installing')
   .action((mod, opts) => {
+    const bedrock = init()
     const modules = bedrock.filter(mod)
     const start: Date = new Date()
 
@@ -64,8 +82,9 @@ cli
   })
 
 cli
-  .command('uninstall [module]', 'Uninstalls module from your local micraft client')
+  .command('uninstall [module/s?]', 'Uninstalls module from your local micraft client')
   .action((mod, opts) => {
+    const bedrock = init()
     const modules = bedrock.filter(mod)
     const start: Date = new Date()
 
@@ -76,8 +95,9 @@ cli
   })
 
 cli
-  .command('init [name]', 'Initializes a new object')
+  .command('init [name?]', 'Initializes a new module')
   .action((namespace, opts) => {
+    const bedrock = init()
     return bedrock
       .create()
       .prompt('module', { namespace })
@@ -87,15 +107,6 @@ cli
 cli.help()
 cli.version(version)
 cli.parse()
-
-if (cli.options.debug) {
-  bedrock.on('debug', (m) => console.log(m))
-}
-
-bedrock.on('error', (m) => console.log(m))
-bedrock.on('warn', (m) => console.log(m))
-bedrock.on('info', (m) => console.log(m))
-bedrock.on('message', (m) => console.log(m))
 
 process.on('SIGINT', () => {
   console.log(`goodbye`)
