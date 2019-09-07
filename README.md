@@ -19,7 +19,7 @@ Disclosure](https://img.shields.io/badge/Security-Responsible%20Disclosure-yello
 
 <div align="center">
 
-## THIS IS A WIP
+# THIS IS A WIP
 
 </div>
 
@@ -55,7 +55,9 @@ Ensure you have a package.json file present in your development directory, if yo
 }
 ```
 
-install the package (It's not currently available on NPM, you'll have to use the Github repository)
+or you can run `npm init` in the direcotry of your project
+
+install the bedr0ck cli package
 
 ```
 npm install --save-dev @bedr0ck/cli
@@ -63,7 +65,7 @@ npm install --save-dev @bedr0ck/cli
 
 This will automatically install the required packages
 
-## Create a bedrock.config.js configuration
+## Create a bedrock configuration file
 
 use the following as a template for your bedrock.config.js
 
@@ -72,55 +74,105 @@ use the following as a template for your bedrock.config.js
 // IMPORTANT: This file is not going through babel transformation.
 // You can however use the ES2015 features supported by your Node.js version.
 module.exports = {
-  // Name of addon
-  // @optional
-  // @default package.json > name
-  name:         'string',
+  /**
+   * Name of addon
+   * @optional
+   * @default package.json > name
+   */
+  // name: 'name',
 
-  // Version of addon
-  // @optional,
-  // @default package.json > version
-  version:      'string',
+  /**
+   * Version of addon
+   * @optional
+   * @default package.json > version
+   */
+  // version: 'version',
 
-  // Description of addon
-  // @optional
-  // @default package.json > description
-  description:  'string',
+  /**
+   * Description of addon
+   * @optional
+   * @default package.json > description
+   */
+  // description: 'description',
 
-  // Base directory for source and distributable files
-  // @optional
-  // @default process.cwd()
-  rootDir: 'string',
+  /**
+   * Base directory for source, distributable and packaged files
+   * @optional
+   * @default process.cwd()
+   */
+  // rootDir: process.cwd(),
 
-  // Directory for source files,
-  // @optional,
-  // @default src
-  srcDir: 'string',
+  /**
+   * Directory for source files,
+   * @optional
+   * @default src
+   */
+  // srcDir: 'src',
 
-  // Directory for distributable files
-  // @optional
-  // @default dist
-  outDir: 'string',
+  /**
+   * Directory for distributable files
+   * @optional
+   * @default dist
+   */
+  // distDir: 'dist',
 
-  nameing: {
-    // Name of the packaged mcaddon file
-    // @optional
-    // @default {project}-{projectVer}.mcaddon
-    mcaddon: 'string',
+  /**
+   * Directory for distributable files
+   * @optional
+   * @default dist/pack
+   */
+  // packDir: 'dist/pack',
 
-    // Name of the packaged mcpack file
-    // @optional
-    // @default {module}-{moduleVer}.mcpack
-    mcpack: 'string',
+  /**
+   * This is where you can change the name of the distributable files
+   * @optional
+   * @mcaddon The file name of the generated mcaddon
+   * @mcpack  The file name of the generated mcpack
+   * @install The folder name of the module when installing
+   */
+  // nameing: {
+  //   mcaddon: '{project}-{projectVer}.mcaddon',
+  //   mcpack: '{module}-{moduleVer}.mcpack',
+  //   install: '{project}-{module}',
+  // },
 
-    // Name of the folder to install in you local bedrock
-    // @optional
-    // @default {project}-{module}
-    install: 'string',
-  },
+  /**
+   * Version of addon
+   * @optional
+   * @param config webpack config
+   * @param options bedrocks env options (see https://github.com/bedr0ck/cli/blob/master/src/lib/bedr0ck.ts#L38)
+   * @param mod info about module that is bing packed (see https://github.com/bedr0ck/cli/blob/master/src/lib/bedr0ck.ts#L28)
+   * @param webpack the webpack imported npm module (see https://webpack.js.org/)
+   * @returns webpack config
+   */
 	webpack(config, options, mod, webpack) {
     // Perform customizations to config
     // Important: return the modified config
+
+    // By default it will detect index.js in scripts/client/ and scripts/server/
+    // if you want to add a new entry point use:
+    /*
+    let entry
+    switch (mod.folder) {
+      case 'my-module':
+        entry = {
+          // 'path of dist file w/o ext' : 'path of src file with ext'
+          'scripts/client/entry' :    'scripts/client/entry.js',
+          'scripts/client/new-entry' : 'scripts/client/new-entry.js',
+          'scripts/server/entry' :    'scripts/server/entry.js',
+          'scripts/server/new-entry' : 'scripts/server/new-entry.js',
+        }
+        break
+    }
+
+    if (entry) {
+      for (const k of Object.keys(entry)) {
+        let file = path.join(conf.rootDir, conf.srcDir, mod.folder, entry[k])
+        typeof config.entry === 'object' ? config.entry[k] = [file] : config.entry = { [k]: [file] }
+      }
+    }
+    */
+
     return config
   }
 }
@@ -130,14 +182,18 @@ Next, update your package.json with appropriate scripts, here are some useful sc
 
 ```json
   "scripts": {
-    "build": "bedrock build",
-    "watch": "bedrock watch",
-    "install": "bedrock install",
-    "uninstall": "bedrock install",
-    "init": "bedrock init",
+    "init": "bedr0ck init",
+    "build": "bedr0ck build",
+    "build:watch": "bedr0ck build -w",
+    "build:install": "bedr0ck build -i",
+    "pack": "bedr0ck pack",
+    "pack:build": "bedr0ck pack -b",
+    "install": "bedr0ck install",
+    "uninstall": "bedr0ck uninstall",
   },
 ```
 
+-   use **npm run init** to create a new boilerplate module
 -   use **npm run build** to create the directory structure for a .mcaddon
 -   use **npm run install** to install the addon into Minecraft for Windows 10
 -   use **npm run uninstall** to uninstall the addon into Minecraft for Windows 10
@@ -146,17 +202,42 @@ Next, update your package.json with appropriate scripts, here are some useful sc
     -   deploy it to to Minecraft for Windows 10
     -   monitor for changes on the filesystem
         -   automatically rebuilds and deploys the project.
--   use **npm run init** to create a new boilerplate module
 
 ## Conventions
 
-These scripts will assume a certain directory structure by default. These can be overridden by altering properties on the `srcDir` and `outDir` objects in your bedrock.config.js.
+These scripts will assume a certain directory structure by default. These can be overridden by altering properties on the `srcDir`, `distDir` and `packDir` objects in your bedrock.config.js.
 
-| directory      | purpose                                                                                                                | config property |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------- | --------------- |
-| .\src          | place a directory in here for each pack you have. The type of the pack will be determined by it's `manifest.json` file | srcDir          |
-| .\dest         | the constructed pack directories will be assembled here, ready for deployment into Minecraft                           | outDir          |
-| .\dest         | constructed .mcpack and .mcaddon files will be placed here                                                             | outDir          |
+| directory       | purpose                                                                                                                | config property |
+| --------------  | ---------------------------------------------------------------------------------------------------------------------- | --------------- |
+| .\src           | place a directory in here for each pack you have. The type of the pack will be determined by it's `manifest.json` file | srcDir          |
+| .\dist          | the constructed pack directories will be assembled here, ready for deployment into Minecraft                           | distDir         |
+| .\dist\packaged | constructed .mcpack and .mcaddon files will be placed here                                                             | packDir         |
+
+## Commands
+
+```
+Usage:
+  $ bedr0ck <command> [options]
+  $ bedrock <command> [options]
+
+Options:
+  -w, --watch          Watch for changes, build and install modules
+  -b, --build          Build before installing/packing
+  -i, --install        Install module after build
+  -h, --help           Display help
+  -v, --version        Display version number
+  --verboose, --debug  Verboose output
+
+Commands:
+  build [module/s?]      Builds addon scripts into one file
+  pack [module/s?]       Packs addons into one .mcaddon package
+  install [module/s?]    Installs module from your local micraft client
+  uninstall [module/s?]  Uninstalls module from your local micraft client
+  init [name?]           Initializes a new module
+
+[module/s?]
+  defaults to all modules, to build specific modules supply a comma separated lists
+```
 
 # License
 Licensed under [MIT](./LICENSE).
