@@ -21,7 +21,7 @@
     "lint": "tslint -t stylish --project tsconfig.json",
     "lint:fix": "npm run lint -- --fix",
     "precommit": "npm run lint",
-    "release": "npm run precommit && standard-version && git push --follow-tags origin master && npm run publish",
+    "release": "npm run precommit && standard-version && git push --follow-tags origin master && npm publish",
     "clean": "rimraf lib bin"
   },
   "license": "MIT",
