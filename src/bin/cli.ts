@@ -77,7 +77,7 @@ cli
 
 cli
   .command('init [name]', 'Initializes a new object')
-  .action((namespace, options) => {
+  .action((namespace, opts) => {
     return bedrock
       .create()
       .prompt('module', { namespace })
