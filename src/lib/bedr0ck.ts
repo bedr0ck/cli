@@ -45,7 +45,8 @@ export interface IBedrockUserConfig {
   description?: string,
   rootDir?: string,
   srcDir?: string,
-  outDir?: string,
+  distDir?: string,
+  packDir?: string,
   nameing?: {
     mcaddon?: string,
     mcpack?: string,
@@ -60,7 +61,8 @@ export interface IBedrockConfig {
   description: string,
   rootDir: string,
   srcDir: string,
-  outDir: string,
+  distDir: string,
+  packDir: string,
   nameing: {
     mcaddon: string,
     mcpack: string,
@@ -76,9 +78,7 @@ export class Bedr0ck extends EventEmitter {
   public options: IBedrockOptions
   public config: IBedrockConfig
   public modules: Map<string, IModuleData> = new Map<string, IModuleData>()
-
-  public root: string
-  public out: string
+  public dir: { pack: string, dist: string, src: string }
 
   constructor() {
     super()
@@ -112,9 +112,10 @@ export class Bedr0ck extends EventEmitter {
       name: pkg.name,
       version:  pkg.version,
       description:  pkg.description,
-      outDir: 'dist',
       rootDir: process.cwd(),
       srcDir: 'src',
+      distDir: 'dist',
+      packDir: 'dist/packaged',
     }, conf)
 
     this.config.nameing = Object.assign({
@@ -123,11 +124,14 @@ export class Bedr0ck extends EventEmitter {
       install:  '{project}-{module}',
     }, conf.nameing || {})
 
-    const { rootDir, srcDir, outDir } = this.config
-    this.root = path.join(rootDir, srcDir)
-    this.out = path.join(rootDir, outDir)
+    const { rootDir, srcDir, distDir, packDir } = this.config
+    this.dir = {
+      src:  path.join(rootDir, srcDir),
+      dist: path.join(rootDir, distDir),
+      pack: path.join(rootDir, packDir),
+    }
 
-    const modules = this.getModules(this.root)
+    const modules = this.getModules(this.dir.src)
     if (!modules || modules.length <= 0) {
       throw new NoModules('No modules avalible', this)
     }
@@ -149,11 +153,11 @@ export class Bedr0ck extends EventEmitter {
 
   public copy(mod: IModuleData): Promise<void> {
     this.emit('debug', `copy => ${mod.folder}`)
-    return fs.copy(path.join(this.root, mod.folder), path.join(this.out, mod.folder)) as Promise<void>
+    return fs.copy(path.join(this.dir.src, mod.folder), path.join(this.dir.dist, mod.folder)) as Promise<void>
   }
 
   public clean(mod: IModuleData): Promise<void> {
-    const dest = path.join(this.out, mod.folder)
+    const dest = path.join(this.dir.dist, mod.folder)
     if (fs.existsSync(dest)) {
       this.emit('debug', `clean => ${mod.folder}`)
       return fs.remove(dest) as Promise<void>
@@ -166,8 +170,8 @@ export class Bedr0ck extends EventEmitter {
   public pack(file: string | IModuleData, filter?: (archive: Archiver) => void): Promise<IPacked> {
     if (typeof file !== 'string') {
       const mod = file as IModuleData
-      filter = (zip) => zip.directory(path.join(this.out, mod.folder), mod.folder)
-      file = path.join(this.out, this.naming(this.config.nameing.mcpack, mod))
+      filter = (zip) => zip.directory(path.join(this.dir.dist, mod.folder), mod.folder)
+      file = path.join(this.dir.pack, this.naming(this.config.nameing.mcpack, mod))
     }
 
     return new Promise((resolve, reject) => {
@@ -242,7 +246,7 @@ export class Bedr0ck extends EventEmitter {
     return Promise
       .all(pack)
       .then<IPacked>((packed: IPacked[]) => {
-        return this.pack(path.join(this.out, this.naming(this.config.nameing.mcaddon)), (zip) => {
+        return this.pack(path.join(this.dir.pack, this.naming(this.config.nameing.mcaddon)), (zip) => {
           for (const data of packed) {
             zip.file(path.join(data.path, data.file), { name: data.file })
           }
@@ -497,7 +501,7 @@ export class Bedr0ck extends EventEmitter {
         return [mod]
       }
     } else {
-      return this.getModules(this.out)
+      return this.getModules(this.dir.dist)
     }
   }
 }

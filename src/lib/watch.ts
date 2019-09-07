@@ -11,9 +11,7 @@ export class Watch {
   private modules: Map<string, IModuleData> = new Map<string, IModuleData>()
   private installed: { [key: string]: IModuleData } = {}
   private files: string[] = []
-
-  private root: string
-  private out: string
+  private dir: { dist: string, src: string }
 
   constructor(b: Bedr0ck, modules: IModuleData[]) {
     this.bedrock = b
@@ -24,8 +22,10 @@ export class Watch {
       }
     }
 
-    this.root = b.root
-    this.out = b.out
+    this.dir = {
+      dist: b.dir.dist,
+      src: b.dir.src,
+    }
   }
 
   public start(): Promise<void> {
@@ -35,7 +35,7 @@ export class Watch {
 
     const globs: string[] = []
     for (const [k, m] of this.modules) {
-      globs.push(path.join(this.root, m.folder, '**/*').replace(/\\/g, '/'))
+      globs.push(path.join(this.dir.src, m.folder, '**/*').replace(/\\/g, '/'))
     }
 
     this.bedrock.emit('info', `Starting build process...`)
@@ -52,7 +52,7 @@ export class Watch {
 
         const watching = []
         for (const [k, m] of this.modules) {
-          watching.push(path.join(this.root, k))
+          watching.push(path.join(this.dir.src, k))
         }
         const watcher = chokidar.watch(watching)
 
@@ -90,7 +90,7 @@ export class Watch {
   }
 
   private update(file: string, action: string): Promise<any> {
-    const base = file.replace(`${this.root}${path.sep}`, '')
+    const base = file.replace(`${this.dir.src}${path.sep}`, '')
     const folders = base.split(path.sep)
 
     if (!this.modules.has(folders[0])) {
@@ -99,7 +99,7 @@ export class Watch {
     }
 
     const mod = this.modules.get(folders[0]) as IModuleData
-    const dest = path.join(this.out, mod.folder)
+    const dest = path.join(this.dir.dist, mod.folder)
     const installed = this.installed[mod.uuid]
 
     if (!installed) {
@@ -120,7 +120,7 @@ export class Watch {
         }) as Promise<any>
     }
 
-    const f = file.replace(`${path.join(this.root, mod.folder)}${path.sep}`, '')
+    const f = file.replace(`${path.join(this.dir.src, mod.folder)}${path.sep}`, '')
     switch (action) {
       case 'add':
           this.bedrock.emit('debug', `File added ${file}`)

@@ -13,11 +13,11 @@ import { time } from './utils'
 
 export class Create {
   private bedrock: Bedr0ck
-  private root: string
+  private src: string
 
   constructor(b: Bedr0ck) {
     this.bedrock = b
-    this.root = b.root
+    this.src = b.dir.src
   }
 
   public prompt(type?: string, defaults: any = {}): Promise<void> {
@@ -62,7 +62,7 @@ export class Create {
       }
     }
 
-    const dir = path.join(this.root, options.namespace)
+    const dir = path.join(this.src, options.namespace)
 
     this.bedrock.emit('info', chalk`{green Creating {white '${options.name}'} in {white '${options.namespace}'}}`)
 

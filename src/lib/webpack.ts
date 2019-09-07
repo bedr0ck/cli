@@ -50,7 +50,7 @@ export default function(opts: IBedrockOptions, mod: IModuleData, conf: IBedrockC
       // Hacky way to force webpack to have multiple output folders vs multiple files per one path
       filename: 'scripts/[name]/[name].js',
       libraryTarget: 'commonjs',
-      path: path.join(conf.rootDir, conf.outDir, mod.folder),
+      path: path.join(conf.rootDir, conf.distDir, mod.folder),
     },
 
     plugins: [
