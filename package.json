@@ -36,7 +36,16 @@
   },
   "keywords": [
     "minecraft",
-    "bedrock",
+    "minecraft-bedrock",
+    "minecraft-bedrock-edition",
+    "cli",
+    "tool",
+    "tools",
+    "toolset",
+    "toolkit",
+    "addon",
+    "addons",
+    "javscript",
     "typescript"
   ],
   "dependencies": {
