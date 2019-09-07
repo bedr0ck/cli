@@ -1,6 +1,6 @@
 {
   "name": "@bedr0ck/cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "CLI tool for creating bedrock addons",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
