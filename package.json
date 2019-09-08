@@ -20,8 +20,8 @@
     "lint": "eslint --ext .ts ./src",
     "lint:fix": "npm run lint -- --fix",
     "precommit": "npm run lint",
-    "release": "npm run precommit && npm run build && standard-version",
-    "publish": "npm run precommit && git push --follow-tags origin master && npm publish",
+    "release": "npm run precommit && standard-version",
+    "publish": "npm run precommit && npm run build && git push --follow-tags origin master && npm publish",
     "clean": "rimraf dist"
   },
   "license": "MIT",
