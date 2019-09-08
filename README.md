@@ -4,18 +4,19 @@
 
 <div align="center">
 
-[![Known Vulnerabilities](https://snyk.io/test/github/bedr0ck/cli/badge.svg)](https://snyk.io/test/github/bedr0ck/cli) [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)
+[![NPM version](https://img.shields.io/npm/v/@bedr0ck/cli.svg?style=flat)](https://www.npmjs.com/package/@bedr0ck/cli)
+[![NPM downloads](https://img.shields.io/npm/dm/@bedr0ck/cli.svg?style=flat)](https://www.npmjs.com/package/@bedr0ck/cli) [![Known Vulnerabilities](https://snyk.io/test/github/bedr0ck/cli/badge.svg)](https://snyk.io/test/github/bedr0ck/cli)
+
 
 </div>
 
 <div align="center">
 
-[![NPM version](https://img.shields.io/npm/v/@bedr0ck/cli.svg?style=flat)](https://www.npmjs.com/package/@bedr0ck/cli)
-[![NPM downloads](https://img.shields.io/npm/dm/@bedr0ck/cli.svg?style=flat)](https://www.npmjs.com/package/@bedr0ck/cli)
-[![Security Responsible
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org) [![js-standard-style](https://img.shields.io/badge/Code%20Style-Standard-brightgreen.svg?style=flat)](http://standardjs.com/) [![Security Responsible
 Disclosure](https://img.shields.io/badge/Security-Responsible%20Disclosure-yellow.svg)](https://github.com/nodejs/security-wg/blob/master/processes/responsible_disclosure_template.md)
 
 </div>
+
 
 <div align="center">
 
