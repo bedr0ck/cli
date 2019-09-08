@@ -4,7 +4,7 @@ import * as Promise from 'bluebird'
 import chalk from 'chalk'
 import cac from 'cac'
 
-import Bedr0ck from '../lib'
+import Bedr0ck, { IPacked, IModuleData } from '../lib'
 import { time } from '../lib/utils'
 
 // @ts-ignore
@@ -12,7 +12,7 @@ import { version } from '../package.json'
 
 const cli = cac('bedr0ck')
 
-const init = () => {
+const init = (): Bedr0ck => {
   const bedrock = new Bedr0ck()
 
   if (cli.options.debug) {
@@ -34,15 +34,15 @@ cli
   .command('build [module/s?]', 'Builds addon scripts into one file')
   .option('-w, --watch', 'Watch for changes, build and install modules')
   .option('-i, --install', 'Install module after build')
-  .action((mod: string, opts) => {
+  .action((mod: string, opts): Promise<void> => {
     const bedrock = init()
 
     const modules = bedrock.filter(mod)
     const start: Date = new Date()
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject): Promise<IModuleData[] | void> => {
       if (opts.w) {
-         return bedrock.watch(modules).then(resolve).catch(reject)
+        return bedrock.watch(modules).then(resolve).catch(reject)
       }
       return bedrock.build(modules, opts.i).then(resolve).catch(reject)
     })
@@ -53,16 +53,19 @@ cli
 cli
   .command('pack [module/s?]', 'Packs addons into one .mcaddon package')
   .option('-b, --build', 'Build before packing')
-  .action((mod, opts) => {
+  .action((mod, opts): Promise<void> => {
     const bedrock = init()
     const modules = bedrock.filter(mod)
     const start: Date = new Date()
 
-    return new Promise((resolve, reject) => {
-      if (opts.b) { return bedrock.build(modules).then(resolve).catch(reject) }
+    return new Promise((resolve, reject): void => {
+      if (opts.b) {
+        bedrock.build(modules).then(resolve).catch(reject)
+        return
+      }
       return resolve()
     })
-    .then<any>(() => bedrock.package(modules))
+    .then<IPacked>(() => bedrock.package(modules))
     .then<void>(() => console.log(chalk`{bgGreen {black  DONE }} {green Packing complete in ${time(start)}ms}`))
     .catch((err) => console.error(err))
   })
@@ -70,7 +73,7 @@ cli
 cli
   .command('install [module/s?]', 'Installs module from your local micraft client')
   .option('-b, --build', 'Build before installing')
-  .action((mod, opts) => {
+  .action((mod, opts): Promise<void> => {
     const bedrock = init()
     const modules = bedrock.filter(mod)
     const start: Date = new Date()
@@ -83,7 +86,7 @@ cli
 
 cli
   .command('uninstall [module/s?]', 'Uninstalls module from your local micraft client')
-  .action((mod, opts) => {
+  .action((mod, opts): Promise<void> => {
     const bedrock = init()
     const modules = bedrock.filter(mod)
     const start: Date = new Date()
@@ -96,7 +99,7 @@ cli
 
 cli
   .command('init [name?]', 'Initializes a new module')
-  .action((namespace, opts) => {
+  .action((namespace, opts): Promise<void> => {
     const bedrock = init()
     return bedrock
       .create()
@@ -108,7 +111,7 @@ cli.help()
 cli.version(version)
 cli.parse()
 
-process.on('SIGINT', () => {
-  console.log(`goodbye`)
+process.on('SIGINT', (): void => {
+  console.log('goodbye')
   process.exit()
 })

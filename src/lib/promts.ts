@@ -15,7 +15,7 @@ export interface IModulePromt {
   template: 'boilerplate' | 'blank',
 }
 
-export function modules(b: Bedr0ck, defaults: any = {}): Promise<Answers> {
+export function modules(b: Bedr0ck, defaults: any = {}): Promise<Answers> { // eslint-disable-line @typescript-eslint/no-explicit-any
   const dependenies: Array<{ name: string, value: string, short: string }> = []
 
   for (const [k, m] of b.modules) {
@@ -28,39 +28,39 @@ export function modules(b: Bedr0ck, defaults: any = {}): Promise<Answers> {
 
   return inquirer
     .prompt([{
-        type: 'input',
-        name: 'namespace',
-        message: 'Module namespace?',
-        default: defaults.namespace,
+      type: 'input',
+      name: 'namespace',
+      message: 'Module namespace?',
+      default: defaults.namespace,
+    }, {
+      type: 'input',
+      name: 'name',
+      message: 'Module name?',
+      default: defaults.name,
+    }, {
+      type: 'input',
+      name: 'description',
+      message: 'Module description?',
+      default: defaults.description,
+    }, {
+      type: 'list',
+      name: 'type',
+      message: 'Type of module?',
+      choices: [{
+        name: 'Behavior',
+        value: 'behavior',
+        short: 'behavior',
       }, {
-        type: 'input',
-        name: 'name',
-        message: 'Module name?',
-        default: defaults.name,
-      }, {
-        type: 'input',
-        name: 'description',
-        message: 'Module description?',
-        default: defaults.description,
-      }, {
-        type: 'list',
-        name: 'type',
-        message: 'Type of module?',
-        choices: [{
-          name: 'Behavior',
-          value: 'behavior',
-          short: 'behavior',
-        }, {
-          name: 'Resource',
-          value: 'resource',
-          short: 'resource',
-        }],
-      }, {
-        type: 'checkbox',
-        name: 'dependenies',
-        message: 'Module Dependenies?',
-        choices: dependenies,
-      }])
+        name: 'Resource',
+        value: 'resource',
+        short: 'resource',
+      }],
+    }, {
+      type: 'checkbox',
+      name: 'dependenies',
+      message: 'Module Dependenies?',
+      choices: dependenies,
+    }])
     .then((answers) => {
       const templates = ['blank']
       for (const d of getDirectories(path.join(__dirname, '../resources/module', answers.type )) ) {

@@ -1,20 +1,20 @@
 export interface IManifest {
-  format_version: number
+  format_version: number, // eslint-disable-line @typescript-eslint/camelcase
   header: {
     name: string,
     description: string,
     uuid: string,
-    min_engine_version?: [number, number, number],
+    min_engine_version?: [number, number, number], // eslint-disable-line @typescript-eslint/camelcase
     version: [number, number, number],
-  }
+  },
   modules: IModule[],
   dependencies?: IDependency[],
-  capabilities?: string[]
+  capabilities?: string[],
   metadata?: {
     authors: string,
     license: string,
     url: string,
-  }
+  },
 }
 
 export interface IModule {
@@ -41,7 +41,7 @@ const version = {
 export const shemea = {
   type: 'object',
   properties: {
-    format_version: { type: 'number' },
+    format_version: { type: 'number' }, // eslint-disable-line @typescript-eslint/camelcase
 
     header: {
       type: 'object',
@@ -49,7 +49,7 @@ export const shemea = {
         name: str,
         description: str,
         uuid,
-        min_engine_version: version,
+        min_engine_version: version, // eslint-disable-line @typescript-eslint/camelcase
         version,
       },
       additionalProperties: false,

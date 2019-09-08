@@ -51,8 +51,8 @@ export interface IBedrockUserConfig {
     mcaddon?: string,
     mcpack?: string,
     install?: string,
-  }
-  webpack?(conf: Configuration, opts: IBedrockOptions, mod: IModuleData, webpack: any): Configuration
+  },
+  webpack?(conf: Configuration, opts: IBedrockOptions, mod: IModuleData, webpack: any): Configuration, // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export interface IBedrockConfig {
@@ -67,8 +67,8 @@ export interface IBedrockConfig {
     mcaddon: string,
     mcpack: string,
     install: string,
-  }
-  webpack?(conf: Configuration, opts: IBedrockOptions, mod: IModuleData, webpack: any): Configuration
+  },
+  webpack?(conf: Configuration, opts: IBedrockOptions, mod: IModuleData, webpack: any): Configuration, // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 const ajv = new Ajv()
@@ -87,9 +87,9 @@ export class Bedr0ck extends EventEmitter {
       env: process.env.NODE_ENV || 'production',
     }
 
-    let conf: any = path.resolve(process.cwd(), 'bedrock.config.js')
+    let conf: string | object | IBedrockConfig = path.resolve(process.cwd(), 'bedrock.config.js')
     if (fs.existsSync(conf)) {
-      const data = require(conf)
+      const data = require(conf) // eslint-disable-line @typescript-eslint/no-var-requires
       conf = data ? data.default || data  : {}
     } else {
       this.emit('warn', new NoConfig('Unable to find bedrock user config', this))
@@ -116,13 +116,13 @@ export class Bedr0ck extends EventEmitter {
       srcDir: 'src',
       distDir: 'dist',
       packDir: 'dist/packaged',
-    }, conf)
+    }, conf as IBedrockConfig)
 
     this.config.nameing = Object.assign({
       mcaddon:  '{project}-{projectVer}.mcaddon',
       mcpack:   '{module}-{moduleVer}.mcpack',
       install:  '{project}-{module}',
-    }, conf.nameing || {})
+    }, (conf as IBedrockConfig).nameing || {})
 
     const { rootDir, srcDir, distDir, packDir } = this.config
     this.dir = {
@@ -170,18 +170,19 @@ export class Bedr0ck extends EventEmitter {
   public pack(file: string | IModuleData, filter?: (archive: Archiver) => void): Promise<IPacked> {
     if (typeof file !== 'string') {
       const mod = file as IModuleData
-      filter = (zip) => zip.directory(path.join(this.dir.dist, mod.folder), mod.folder)
+      filter = (zip): void => { zip.directory(path.join(this.dir.dist, mod.folder), mod.folder) }
       file = path.join(this.dir.pack, this.naming(this.config.nameing.mcpack, mod))
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject): void => {
       if (fs.existsSync(file as string)) {
-        return fs.remove(file as string).then(resolve).catch(reject)
+        fs.remove(file as string).then(resolve).catch(reject)
+        return
       }
       return resolve()
     })
     .then(() => {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve, reject): void => {
         if (!filter) {
           return reject(new Error('No pack filter defined'))
         }
@@ -254,10 +255,10 @@ export class Bedr0ck extends EventEmitter {
       })
   }
 
-  public build(mod?: IModuleData | IModuleData[], install: boolean = false): Promise<IModuleData[]> {
+  public build(mod?: IModuleData | IModuleData[], install = false): Promise<IModuleData[]> {
     const modules: IModuleData[] = this.findModules(mod)
 
-    const copies: Array<Promise<any>> = []
+    const copies: Array<Promise<void>> = []
     const builds: IModuleData[] = []
 
     for (const m of modules) {
@@ -267,9 +268,9 @@ export class Bedr0ck extends EventEmitter {
 
     this.emit('debug', `build => ${modules.map((m) => m.folder).join(',')}`)
     return Promise.all(copies)
-      .then<any>(() => this.webpack(builds))
-      .then<any>(() => install ? this.install(modules) : Promise.resolve())
-      .then<any>(() => Promise.resolve(modules))
+      .then<IModuleData[]>(() => this.webpack(builds))
+      .then<IModuleData[] | void>(() => install ? this.install(modules) : Promise.resolve())
+      .then<IModuleData[]>(() => Promise.resolve(modules))
   }
 
   public webpack(mod?: IModuleData | IModuleData[]): Promise<IModuleData[]> {
@@ -290,7 +291,7 @@ export class Bedr0ck extends EventEmitter {
     }
 
     this.emit('debug', `webpack => ${build.map((m) => m.folder).join(',')}`)
-    return new Promise<Stats>((resolve, reject) => {
+    return new Promise<Stats>((resolve, reject): void => {
       webpack(configs).run((error, stats) => {
         if (error || stats.hasErrors()) { return reject(error) }
         return resolve(stats)
@@ -353,11 +354,11 @@ export class Bedr0ck extends EventEmitter {
       .then(() => Promise.resolve(uninstalled))
   }
 
-  public watch(mod?: IModuleData | IModuleData[]) {
+  public watch(mod?: IModuleData | IModuleData[]): Promise<void> {
     return new Watch(this, this.findModules(mod)).start()
   }
 
-  public create() {
+  public create(): Create {
     return new Create(this)
   }
 

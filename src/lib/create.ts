@@ -20,7 +20,7 @@ export class Create {
     this.src = b.dir.src
   }
 
-  public prompt(type?: string, defaults: any = {}): Promise<void> {
+  public prompt(type?: string, defaults: any = {}): Promise<void> { // eslint-disable-line @typescript-eslint/no-explicit-any
     switch (type) {
       case 'module':
         return modules(this.bedrock, defaults).then((answers) => this.module(answers as IModulePromt)) as Promise<void>
@@ -31,7 +31,7 @@ export class Create {
 
   public module(options: IModulePromt): Promise<void> {
     const manifest: IManifest = {
-      format_version: 1,
+      format_version: 1, // eslint-disable-line @typescript-eslint/camelcase
       header: {
         name: options.name,
         description: options.description,
@@ -78,6 +78,6 @@ export class Create {
       })
       .then<void>(() => fs.copy(path.join(__dirname, '../resources/pack_icon.png'), path.join(dir, 'pack_icon.png')))
       .then<void>(() => fs.writeJson(path.join(dir, 'manifest.json'), manifest, { spaces: '  ' }))
-      .then<any>(() => this.bedrock.emit('info', chalk`{bgGreen {black  DONE }} {green Creation complete in ${time(start)}ms}`)) as Promise<void>
+      .then<boolean>(() => this.bedrock.emit('info', chalk`{bgGreen {black  DONE }} {green Creation complete in ${time(start)}ms}`)) as Promise<void>
   }
 }

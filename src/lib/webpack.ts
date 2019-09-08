@@ -9,7 +9,7 @@ import * as FriendlyErrorsWebpackPlugin from 'friendly-errors-webpack-plugin'
 import { Configuration } from 'webpack'
 import { IBedrockConfig, IBedrockOptions, IModuleData } from './bedr0ck'
 
-export const addEntry = (base: Configuration, file: string, scope: string) => {
+export const addEntry = (base: Configuration, file: string, scope: string): void => {
   if (fs.existsSync(file)) {
     // @ts-ignore
     typeof base.entry === 'object' ? base.entry[scope] = [file] : base.entry = { [scope]: [file] }
@@ -64,7 +64,7 @@ export default function(opts: IBedrockOptions, mod: IModuleData, conf: IBedrockC
       new CopyPlugin([
         {
           context: path.join(conf.rootDir, conf.srcDir, mod.folder, '**/*').replace(/\\/g, '/'),
-          from: `**/*`,
+          from: '**/*',
           ignore: ['scripts/**/*'],
         },
       ]),
