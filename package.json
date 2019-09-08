@@ -1,6 +1,6 @@
 {
   "name": "@bedr0ck/cli",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "CLI tool for creating bedrock addons",
   "main": "./dist/lib/index.js",
   "types": "./dist/lib/index.d.ts",
@@ -20,7 +20,7 @@
     "lint": "eslint --ext .ts ./src",
     "lint:fix": "npm run lint -- --fix",
     "precommit": "npm run lint",
-    "release": "npm run precommit && standard-version",
+    "release": "npm run precommit && npm run build && standard-version",
     "publish": "npm run precommit && git push --follow-tags origin master && npm publish",
     "clean": "rimraf dist"
   },
