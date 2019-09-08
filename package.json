@@ -2,15 +2,14 @@
   "name": "@bedr0ck/cli",
   "version": "0.1.2",
   "description": "CLI tool for creating bedrock addons",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "./dist/lib/index.js",
+  "types": "./dist/lib/index.d.ts",
   "bin": {
-    "bedr0ck": "./bin/cli.js",
-    "bedrock": "./bin/cli.js"
+    "bedr0ck": "./dist/bin/cli.js",
+    "bedrock": "./dist/bin/cli.js"
   },
   "files": [
-    "/bin",
-    "/lib",
+    "/dist",
     "/resources"
   ],
   "engines": {
@@ -18,11 +17,12 @@
   },
   "scripts": {
     "build": "npm run clean && tsc -b",
-    "lint": "tslint -t stylish --project tsconfig.json",
+    "lint": "eslint --ext .ts ./src",
     "lint:fix": "npm run lint -- --fix",
     "precommit": "npm run lint",
-    "release": "npm run precommit && standard-version && git push --follow-tags origin master && npm publish",
-    "clean": "rimraf lib bin"
+    "release": "npm run precommit && standard-version",
+    "publish": "npm run precommit && git push --follow-tags origin master && npm publish",
+    "clean": "rimraf dist"
   },
   "license": "MIT",
   "author": "Nurdism <https://github.com/nurdism>",
@@ -71,9 +71,11 @@
     "@types/node": "^12.7.4",
     "@types/uuid": "^3.4.5",
     "@types/webpack": "^4.39.1",
+    "@typescript-eslint/eslint-plugin": "^2.1.0",
+    "@typescript-eslint/parser": "^2.1.0",
+    "eslint": "^6.3.0",
     "rimraf": "^3.0.0",
     "standard-version": "^7.0.0",
-    "tslint": "^5.19.0",
     "typescript": "^3.6.2"
   }
 }
