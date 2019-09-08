@@ -46,5 +46,4 @@ package-lock.json
 # Node/Project
 /coverage/
 /node_modules/
-/bin/
-/lib/
+/dist/
